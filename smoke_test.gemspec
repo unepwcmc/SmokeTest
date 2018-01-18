@@ -7,7 +7,6 @@ Gem::Specification.new do |s|
   s.authors     = [""]
   s.email       = ''
   s.files       = ["lib/smoke_test.rb"]
-  s.homepage    =
-    'https://github.com/unepwcmc/SmokeTest'
+  s.homepage    = 'https://github.com/unepwcmc/SmokeTest'
   s.license     = 'BSD-3-Clause'
 end
