@@ -11,6 +11,7 @@ Add the gem to your Rails project Gemfile and run `bundle install`
 production:
   secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
   smoke_test:
+    urls: ["http://www.example.com", "http://www.example2.com"]
     api_token: "XXXXXX"
     slack_uri: "XXXXXX"
     slack_token: "XXXXXX"

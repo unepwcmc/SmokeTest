@@ -1,23 +1,23 @@
 require 'net/http'
 
 class SmokeTest
-  def initialize(urls)
-    @@urls = urls
+  def initialize
+    @urls = secrets.smoke_test[:urls]
     secrets = Rails.application.secrets
-    @@api_token = secrets.smoke_test[:api_token] || ""
-    @@slack_uri = secrets.smoke_test[:slack_uri]
-    @@slack_token = secrets.smoke_test[:slack_token]
-    @@slack_room = secrets.smoke_test[:slack_room]
-    @@slack_username = secrets.smoke_test[:slack_username]
-    @@slack_emoji = secrets.smoke_test[:slack_emoji]
+    @api_token = secrets.smoke_test[:api_token] || ""
+    @slack_uri = secrets.smoke_test[:slack_uri]
+    @slack_token = secrets.smoke_test[:slack_token]
+    @slack_room = secrets.smoke_test[:slack_room]
+    @slack_username = secrets.smoke_test[:slack_username]
+    @slack_emoji = secrets.smoke_test[:slack_emoji]
   end
 
   def self.test_endpoints
     message = ""
 
-    @@urls.each do |url|
+    @urls.each do |url|
       if /api/.match(url)
-        curl_result = `curl -i -s -w "%{http_code}" #{url} -H "X-Authentication-Token:#{@@api_token}" -o /dev/null`
+        curl_result = `curl -i -s -w "%{http_code}" #{url} -H "X-Authentication-Token:#{@api_token}" -o /dev/null`
       else
         curl_result = `curl -s -w "%{http_code}" #{url} -o /dev/null`
       end
@@ -35,13 +35,13 @@ class SmokeTest
   end
 
   def self.slack_smoke_notification(message)
-    uri = URI.parse("#{@@slack_uri}/#{@@slack_token}")
+    uri = URI.parse("#{@slack_uri}/#{@slack_token}")
 
     payload = {
-      channel: @@slack_room,
-      username: @@slack_username,
+      channel: @slack_room,
+      username: @slack_username,
       text: message,
-      icon_emoji: @@slack_emoji
+      icon_emoji: @slack_emoji
     }
 
     response = nil
