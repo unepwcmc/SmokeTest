@@ -15,7 +15,7 @@ class SmokeTest
   def self.test_endpoints
     message = ""
 
-    if @urls.any?
+    unless @urls.nil?
       @urls.each do |url|
         if /api/.match(url)
           curl_result = `curl -i -s -w "%{http_code}" #{url} -H "X-Authentication-Token:#{@api_token}" -o /dev/null`
