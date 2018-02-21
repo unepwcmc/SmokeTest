@@ -15,21 +15,25 @@ class SmokeTest
   def self.test_endpoints
     message = ""
 
-    @urls.each do |url|
-      if /api/.match(url)
-        curl_result = `curl -i -s -w "%{http_code}" #{url} -H "X-Authentication-Token:#{@api_token}" -o /dev/null`
-      else
-        curl_result = `curl -s -w "%{http_code}" #{url} -o /dev/null`
-      end
+    if @urls.any?
+      @urls.each do |url|
+        if /api/.match(url)
+          curl_result = `curl -i -s -w "%{http_code}" #{url} -H "X-Authentication-Token:#{@api_token}" -o /dev/null`
+        else
+          curl_result = `curl -s -w "%{http_code}" #{url} -o /dev/null`
+        end
 
-      if curl_result == "200"
-        message << "#{url} passed the smoke test\n"
-      elsif curl_result == "302"
-        message << "#{url} passed the smoke test with a redirection\n"
-      else
-        message << "#{url} failed the smoke test\n"
-      end
-     end
+        if curl_result == "200"
+          message << "#{url} passed the smoke test\n"
+        elsif curl_result == "302"
+          message << "#{url} passed the smoke test with a redirection\n"
+        else
+          message << "#{url} failed the smoke test\n"
+        end
+       end
+    else
+      message << "Urls not properly configured"
+    end
 
     slack_smoke_notification message
   end
