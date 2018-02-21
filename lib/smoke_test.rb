@@ -1,9 +1,12 @@
 require 'net/http'
+require 'json'
+require 'openssl'
 
 class SmokeTest
   def initialize
-    @urls = secrets.smoke_test[:urls]
     secrets = Rails.application.secrets
+    @urls = secrets.smoke_test[:urls]
+    @http_header = secrets.smoke_test[:http_header]
     @api_token = secrets.smoke_test[:api_token] || ""
     @slack_uri = secrets.smoke_test[:slack_uri]
     @slack_token = secrets.smoke_test[:slack_token]
@@ -12,13 +15,13 @@ class SmokeTest
     @slack_emoji = secrets.smoke_test[:slack_emoji]
   end
 
-  def self.test_endpoints
+  def test_endpoints
     message = ""
 
     unless @urls.nil?
       @urls.each do |url|
         if /api/.match(url)
-          curl_result = `curl -i -s -w "%{http_code}" #{url} -H "X-Authentication-Token:#{@api_token}" -o /dev/null`
+          curl_result = `curl -i -s -w "%{http_code}" #{url} -H "#{@http_header}:#{@api_token}" -o /dev/null`
         else
           curl_result = `curl -s -w "%{http_code}" #{url} -o /dev/null`
         end
@@ -32,13 +35,13 @@ class SmokeTest
         end
        end
     else
-      message << "Urls not properly configured"
+      message << "Urls are not properly configured"
     end
 
     slack_smoke_notification message
   end
 
-  def self.slack_smoke_notification(message)
+  def slack_smoke_notification(message)
     uri = URI.parse("#{@slack_uri}/#{@slack_token}")
 
     payload = {
