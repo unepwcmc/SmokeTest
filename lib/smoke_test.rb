@@ -20,7 +20,7 @@ class SmokeTest
     message << "Smoke Test results"
     if @urls.nil?
       message << "Urls are not properly configured"
-      slack_smoke_notification message
+      slack_smoke_notification message.join("\n")
       return
     end
 
