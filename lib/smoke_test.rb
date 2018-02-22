@@ -32,9 +32,10 @@ class SmokeTest
         curl_result = `curl -s -w "%{http_code}" #{url} -o /dev/null`
       end
 
-      if curl_result == "200"
+      case curl_result
+      when "200"
         message << "#{url} passed the smoke test\n"
-      elsif curl_result == "302"
+      when "302"
         message << "#{url} passed the smoke test with a redirection\n"
       else
         message << "#{url} failed the smoke test\n"
