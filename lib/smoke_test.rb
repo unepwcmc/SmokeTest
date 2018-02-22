@@ -16,32 +16,38 @@ class SmokeTest
   end
 
   def test_endpoints
-    message = ""
-
     if @urls.nil?
-      message << "Urls are not properly configured"
+      message = "Urls are not properly configured"
       slack_smoke_notification message
       return
     end
 
-    @urls.each do |url|
+    message = test_urls(@urls)
+    slack_smoke_notification message
+  end
+
+  def test_urls(urls)
+    results = ""
+    urls.each do |url|
       if /api/.match(url)
         curl_result = `curl -i -s -w "%{http_code}" #{url} -H "#{@http_header}:#{@api_token}" -o /dev/null`
       else
         curl_result = `curl -s -w "%{http_code}" #{url} -o /dev/null`
       end
-
-      case curl_result
-      when "200"
-        message << "#{url} passed the smoke test\n"
-      when "302"
-        message << "#{url} passed the smoke test with a redirection\n"
-      else
-        message << "#{url} failed the smoke test\n"
-      end
+      results << generate_result(curl_result, url)
     end
+    results
+  end
 
-    slack_smoke_notification message
+  def generate_result(curl_result, url)
+    case curl_result
+    when "200"
+      "#{url} passed the smoke test\n"
+    when "302"
+      "#{url} passed the smoke test with a redirection\n"
+    else
+      "#{url} failed the smoke test\n"
+    end
   end
 
   def slack_smoke_notification(message)
