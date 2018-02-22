@@ -60,15 +60,6 @@ class SmokeTest
       icon_emoji: @slack_emoji
     }
 
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.set_form_data({ :payload => JSON.generate(payload) })
-
-    http             = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl     = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    http.start do |h|
-      response = h.request(request)
-    end
+    Net::HTTP.post_form(uri, {:payload => JSON.generate(payload)})
   end
 end
