@@ -1,7 +1,6 @@
 require 'net/http'
 require 'json'
 require 'openssl'
-require 'byebug'
 
 class SmokeTest
   def initialize
