@@ -71,5 +71,4 @@ class SmokeTest
       response = h.request(request)
     end
   end
-
 end
